@@ -52,7 +52,9 @@ namespace ShipmentService.API.Controllers
                     return NotFound(message);
                 }
 
-                return Ok(shipment);
+                var record = _mapper.Map<GetShipmentDto>(shipment);
+
+                return Ok(record);
             }
             catch (Exception ex)
             {
