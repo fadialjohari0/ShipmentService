@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var connectionString = builder.Configuration.GetSection("ConnectionString")["ShippingServiceDbConnectionString"];
+
 builder.Services.AddDbContext<ShipmentServiceDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
@@ -25,20 +26,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers()
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<PackageDtoValidator>());
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        b => b.AllowAnyHeader()
-            .AllowAnyOrigin()
-            .AllowAnyMethod());
-});
-
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration));
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IShipmentsRepository, ShipmentRepository>();
+builder.Services.AddScoped<IPackagesRepository, PackageRepository>();
 
 var app = builder.Build();
 
@@ -50,8 +44,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
