@@ -25,7 +25,7 @@ namespace ShipmentService.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetShipmentDto>>> GetShipments()
+        public async Task<ActionResult<IEnumerable<GetShipmentDto>>> GetAllShipments()
         {
             try
             {
@@ -33,7 +33,7 @@ namespace ShipmentService.API.Controllers
                 var record = _mapper.Map<List<GetShipmentDto>>(shipments);
                 return Ok(record);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while fetching shipments.");
             }
@@ -56,7 +56,7 @@ namespace ShipmentService.API.Controllers
 
                 return Ok(record);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while fetching the shipment.");
             }
@@ -94,7 +94,7 @@ namespace ShipmentService.API.Controllers
 
                 return CreatedAtAction("GetShipment", new { id = shipment.Id }, response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while creating the shipment.");
             }
@@ -138,7 +138,7 @@ namespace ShipmentService.API.Controllers
                 await _shipmentsRepository.DeleteAsync(id);
                 return Ok($"Shipment {shipment.Id} has been deleted!");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while deleting the shipment.");
             }
