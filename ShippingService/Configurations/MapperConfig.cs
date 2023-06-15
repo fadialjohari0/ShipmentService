@@ -13,6 +13,7 @@ namespace ShipmentService.API.Configurations
             CreateMap<Shipment, GetShipmentDto>().ReverseMap();
 
             CreateMap<Package, PackageDto>().ReverseMap();
+            CreateMap<Package, GetAllPackagesDto>().ReverseMap();
         }
     }
 }
