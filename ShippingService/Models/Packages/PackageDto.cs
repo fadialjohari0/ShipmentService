@@ -1,10 +1,9 @@
+using ShipmentService.API.Models.Shipment;
+
 namespace ShipmentService.API.Models.Package
 {
-    public class PackageDto
+    public class PackageDto : BasePackageDto
     {
-        public double Width { get; set; }
-        public double Height { get; set; }
-        public double Length { get; set; }
-        public double Weight { get; set; }
+
     }
 }
