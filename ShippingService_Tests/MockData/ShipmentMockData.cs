@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using ShipmentService.API.Data;
 
-namespace Demo1.TestApi.MockData
+namespace ShipmentTestApi.MockData
 {
     public class ShipmentMockData
     {
