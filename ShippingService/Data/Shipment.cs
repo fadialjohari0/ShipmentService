@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace ShipmentService.API.Data
 {
     public class Shipment
