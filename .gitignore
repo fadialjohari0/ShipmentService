@@ -1,5 +1,6 @@
 bin/
 obj/
+.config/
 logs/
 .vscode/
 Migrations/
