@@ -30,15 +30,7 @@ namespace ShipmentService.API.Validators
 
         private bool BeNumeric(double value)
         {
-            var x = value.ToString();
-            for (var i = 0; i < x.Length; i++)
-            {
-                if (!Char.IsDigit(x[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return value > 0;
         }
     }
 }
