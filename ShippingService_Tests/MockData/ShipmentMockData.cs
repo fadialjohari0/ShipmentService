@@ -12,8 +12,8 @@ namespace ShipmentTestApi.MockData
                 new Shipment
                 {
                     Id = 1,
-                    ShipmentId = "Fedex",
-                    CarrierServiceId = "fedexAIR",
+                    ShippingCompany = "Fedex",
+                    ShippingServiceType = "fedexAIR",
                     Package = new Package
                     {
                         Width = 5,
@@ -26,8 +26,8 @@ namespace ShipmentTestApi.MockData
                 new Shipment
                 {
                     Id = 2,
-                    ShipmentId = "UPS",
-                    CarrierServiceId = "UPS2DAY",
+                    ShippingCompany = "UPS",
+                    ShippingServiceType = "UPS2DAY",
                     Package = new Package
                     {
                         Width = 7,
@@ -40,8 +40,8 @@ namespace ShipmentTestApi.MockData
                 new Shipment
                 {
                     Id = 3,
-                    ShipmentId = "UPS",
-                    CarrierServiceId = "UPSExpress",
+                    ShippingCompany = "UPS",
+                    ShippingServiceType = "UPSExpress",
                     Package = new Package
                     {
                         Width = 4,
