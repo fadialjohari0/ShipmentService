@@ -5,6 +5,7 @@ using ShipmentService.API.Configurations;
 using ShipmentService.API.Contracts;
 using ShipmentService.API.Data;
 using ShipmentService.API.Repository;
+using ShipmentService.API.UOW;
 using ShipmentService.API.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,7 @@ builder.Services.AddAutoMapper(typeof(MapperConfig));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IShipmentsRepository, ShipmentRepository>();
 builder.Services.AddScoped<IPackagesRepository, PackageRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
