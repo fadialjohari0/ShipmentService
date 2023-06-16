@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShipmentService.API.Contracts;
 using ShipmentService.API.Data;
 using ShipmentService.API.Models.Package;
+using ShipmentService.API.UOW;
 using ShipmentService.API.Validators;
 
 namespace ShipmentService.API.Controllers
@@ -12,14 +13,14 @@ namespace ShipmentService.API.Controllers
     [ApiController]
     public class PackagesController : ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IPackagesRepository _packagesRepository;
         private readonly PackageDtoValidator _packageValidator;
 
-        public PackagesController(IMapper mapper, IPackagesRepository packagesRepository, PackageDtoValidator packageValidator)
+        public PackagesController(IUnitOfWork unitOfWork, IMapper mapper, PackageDtoValidator packageValidator)
         {
+            this._unitOfWork = unitOfWork;
             this._mapper = mapper;
-            this._packagesRepository = packagesRepository;
             this._packageValidator = packageValidator;
         }
 
@@ -28,7 +29,7 @@ namespace ShipmentService.API.Controllers
         {
             try
             {
-                var packages = await _packagesRepository.GetAllAsync();
+                var packages = await _unitOfWork.Packages.GetAllAsync();
                 var record = _mapper.Map<List<GetAllPackagesDto>>(packages);
                 return Ok(record);
             }
@@ -41,7 +42,7 @@ namespace ShipmentService.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Package>> GetPackage(int id)
         {
-            var package = await _packagesRepository.GetAsync(id);
+            var package = await _unitOfWork.Packages.GetAsync(id);
 
             if (package is null)
             {
@@ -55,7 +56,7 @@ namespace ShipmentService.API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Package>> UpdatePackage(int id, PackageDto packageDto)
         {
-            var package = await _packagesRepository.GetAsync(id);
+            var package = await _unitOfWork.Packages.GetAsync(id);
 
             if (package is null)
             {
@@ -70,7 +71,8 @@ namespace ShipmentService.API.Controllers
             }
 
             _mapper.Map(packageDto, package);
-            await _packagesRepository.UpdateAsync(package);
+            _unitOfWork.Packages.Update(package);
+            await _unitOfWork.CompleteAsync();
 
             return Ok(package);
         }

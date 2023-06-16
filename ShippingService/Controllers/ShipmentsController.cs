@@ -1,10 +1,9 @@
-using System;
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using ShipmentService.API.Contracts;
 using ShipmentService.API.Data;
 using ShipmentService.API.Models.Shipment;
+using ShipmentService.API.UOW;
 using ShipmentService.API.Validators;
 
 namespace ShipmentService.API.Controllers
@@ -13,14 +12,14 @@ namespace ShipmentService.API.Controllers
     [ApiController]
     public class ShipmentsController : ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IShipmentsRepository _shipmentsRepository;
         private readonly PackageDtoValidator _packageValidator;
 
-        public ShipmentsController(IMapper mapper, IShipmentsRepository shipmentsRepository, PackageDtoValidator packageValidator)
+        public ShipmentsController(IUnitOfWork unitOfWork, IMapper mapper, PackageDtoValidator packageValidator)
         {
+            this._unitOfWork = unitOfWork;
             this._mapper = mapper;
-            this._shipmentsRepository = shipmentsRepository;
             this._packageValidator = packageValidator;
         }
 
@@ -29,7 +28,7 @@ namespace ShipmentService.API.Controllers
         {
             try
             {
-                var shipments = await _shipmentsRepository.GetDetailsAllAsync();
+                var shipments = await _unitOfWork.Shipments.GetDetailsAllAsync();
                 var record = _mapper.Map<List<GetShipmentDto>>(shipments);
                 return Ok(record);
             }
@@ -44,7 +43,7 @@ namespace ShipmentService.API.Controllers
         {
             try
             {
-                var shipment = await _shipmentsRepository.GetDetails(id);
+                var shipment = await _unitOfWork.Shipments.GetDetails(id);
 
                 if (shipment is null)
                 {
@@ -84,7 +83,9 @@ namespace ShipmentService.API.Controllers
                     return BadRequest(message);
                 }
 
-                await _shipmentsRepository.AddAsync(shipment);
+                await _unitOfWork.Shipments.AddAsync(shipment);
+                await _unitOfWork.CompleteAsync();
+
 
                 var response = new
                 {
@@ -128,14 +129,15 @@ namespace ShipmentService.API.Controllers
         {
             try
             {
-                var shipment = await _shipmentsRepository.GetAsync(id);
+                var shipment = await _unitOfWork.Shipments.GetAsync(id);
 
                 if (shipment is null)
                 {
                     return NotFound($"Shipment {id} isn't found!");
                 }
 
-                await _shipmentsRepository.DeleteAsync(id);
+                await _unitOfWork.Shipments.DeleteAsync(id);
+                await _unitOfWork.CompleteAsync();
                 return Ok($"Shipment {shipment.Id} has been deleted!");
             }
             catch (Exception)
