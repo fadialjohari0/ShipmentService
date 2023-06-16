@@ -1,4 +1,4 @@
-namespace ShipmentService.API.Models.Shipment
+namespace ShipmentService.API.Models.Package
 {
     public class BasePackageDto
     {
