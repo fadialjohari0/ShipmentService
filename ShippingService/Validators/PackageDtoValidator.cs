@@ -3,7 +3,7 @@ using ShipmentService.API.Models.Package;
 
 namespace ShipmentService.API.Validators
 {
-    public class PackageDtoValidator : AbstractValidator<PackageDto>
+    public class PackageDtoValidator : AbstractValidator<BasePackageDto>
     {
         public PackageDtoValidator()
         {
