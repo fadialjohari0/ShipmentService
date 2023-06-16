@@ -16,7 +16,6 @@ namespace ShipmentService.API.Repository
         public async Task<T> AddAsync(T entity)
         {
             await _context.AddAsync(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
 
@@ -24,7 +23,6 @@ namespace ShipmentService.API.Repository
         {
             var entity = await GetAsync(id);
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> Exists(int id)
@@ -48,10 +46,9 @@ namespace ShipmentService.API.Repository
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task UpdateAsync(T entity)
+        public void Update(T entity)
         {
             _context.Update(entity);
-            await _context.SaveChangesAsync();
         }
     }
 }
