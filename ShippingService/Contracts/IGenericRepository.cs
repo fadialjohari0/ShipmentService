@@ -6,6 +6,6 @@ namespace ShipmentService.API.Contracts
         Task<List<T>> GetAllAsync();
         Task<T> AddAsync(T entity);
         Task DeleteAsync(int id);
-        Task UpdateAsync(T entity);
+        void Update(T entity);
     }
 }
