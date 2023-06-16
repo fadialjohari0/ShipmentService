@@ -21,15 +21,15 @@ namespace ShipmentService.API.Data
                 new Shipment
                 {
                     Id = 1,
-                    ShipmentId = "FedEX",
-                    CarrierServiceId = "fedexAIR"
+                    ShippingCompany = "FedEX",
+                    ShippingServiceType = "fedexAIR"
                 },
 
                 new Shipment
                 {
                     Id = 2,
-                    ShipmentId = "FedEX",
-                    CarrierServiceId = "fedexGROUND"
+                    ShippingCompany = "FedEX",
+                    ShippingServiceType = "fedexGROUND"
                 }
             );
 
