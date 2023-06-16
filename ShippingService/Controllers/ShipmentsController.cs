@@ -15,12 +15,15 @@ namespace ShipmentService.API.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly PackageDtoValidator _packageValidator;
+        private readonly ShipmentDtoValidator _shipmentValidator;
 
-        public ShipmentsController(IUnitOfWork unitOfWork, IMapper mapper, PackageDtoValidator packageValidator)
+        public ShipmentsController(IUnitOfWork unitOfWork, IMapper mapper,
+                                   PackageDtoValidator packageValidator, ShipmentDtoValidator shipmentValidator)
         {
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._packageValidator = packageValidator;
+            this._shipmentValidator = shipmentValidator;
         }
 
         [HttpGet]
@@ -68,19 +71,20 @@ namespace ShipmentService.API.Controllers
             {
                 Shipment shipment = _mapper.Map<Shipment>(createShipmentDto);
 
-                var validationResult = await _packageValidator.ValidateAsync(createShipmentDto.Package);
+                var PackageValidationResult = await _packageValidator.ValidateAsync(createShipmentDto.Package);
 
-                if (!validationResult.IsValid)
+                if (!PackageValidationResult.IsValid)
                 {
-                    var errors = validationResult.Errors.Select(error => error.ErrorMessage);
+                    var errors = PackageValidationResult.Errors.Select(error => error.ErrorMessage);
                     return BadRequest(errors);
                 }
 
-                string message = ShipmentInputValidation(createShipmentDto);
+                var ShipmentValidationResult = await _shipmentValidator.ValidateAsync(createShipmentDto);
 
-                if (message != null)
+                if (!ShipmentValidationResult.IsValid)
                 {
-                    return BadRequest(message);
+                    var errors = ShipmentValidationResult.Errors.Select(error => error.ErrorMessage);
+                    return BadRequest(errors);
                 }
 
                 await _unitOfWork.Shipments.AddAsync(shipment);
@@ -99,29 +103,6 @@ namespace ShipmentService.API.Controllers
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while creating the shipment.");
             }
-        }
-
-        private string ShipmentInputValidation(CreateShipmentDto createShipmentDto)
-        {
-            string fedexShipment = "fedex";
-            bool isFedexCarrierService = createShipmentDto.CarrierServiceId.ToLower() == "fedexair" ||
-                                         createShipmentDto.CarrierServiceId.ToLower() == "fedexground";
-
-            string upsShipment = "ups";
-            bool isUPSCarrierService = createShipmentDto.CarrierServiceId.ToLower() == "upsexpress" ||
-                                       createShipmentDto.CarrierServiceId.ToLower() == "ups2day";
-
-            if (createShipmentDto.ShipmentId.ToLower() == fedexShipment && !isFedexCarrierService)
-            {
-                return "Wrong carrier service input! FedEx has the following Carrier Services: 'fedexAIR' or 'fedexGROUND'";
-            }
-
-            if (createShipmentDto.ShipmentId.ToLower() == upsShipment && !isUPSCarrierService)
-            {
-                return "Wrong carrier service input! UPS has the following Carrier Services: 'UPSExpress' or 'UPS2DAY'";
-            }
-
-            return null;
         }
 
         [HttpDelete("{id}")]
