@@ -64,14 +64,14 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero,
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])), // i added the key through user-secrets
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(builder.Configuration["JwtSettings:Key"])), // i added the key through user-secrets
     };
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsProduction())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
