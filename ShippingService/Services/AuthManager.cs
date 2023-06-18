@@ -59,7 +59,7 @@ namespace ShipmentService.API.AuthManager
 
         private async Task<string> GenerateToken(ApiUser user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(_configuration["JwtSettings:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var roles = await _userManager.GetRolesAsync(user);
             var roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
