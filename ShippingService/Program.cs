@@ -1,7 +1,9 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using ShipmentService.API.AuthManager;
 using ShipmentService.API.Configurations;
 using ShipmentService.API.Contracts;
 using ShipmentService.API.Data;
@@ -20,10 +22,15 @@ builder.Services.AddDbContext<ShipmentServiceDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+builder.Services.AddIdentityCore<ApiUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ShipmentServiceDbContext>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<ShipmentDtoValidator>();
@@ -36,6 +43,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IShipmentsRepository, ShipmentRepository>();
 builder.Services.AddScoped<IPackagesRepository, PackageRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAuthManager, AuthManager>();
 
 var app = builder.Build();
 
