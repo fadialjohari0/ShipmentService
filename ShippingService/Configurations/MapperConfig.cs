@@ -2,6 +2,7 @@ using AutoMapper;
 using ShipmentService.API.Data;
 using ShipmentService.API.Models.Package;
 using ShipmentService.API.Models.Shipment;
+using ShipmentService.API.Models.Users;
 
 namespace ShipmentService.API.Configurations
 {
@@ -14,6 +15,8 @@ namespace ShipmentService.API.Configurations
 
             CreateMap<Package, PackageDto>().ReverseMap();
             CreateMap<Package, GetAllPackagesDto>().ReverseMap();
+
+            CreateMap<ApiUserDto, ApiUser>().ReverseMap();
         }
     }
 }
