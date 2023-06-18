@@ -4,3 +4,4 @@ obj/
 logs/
 .vscode/
 Migrations/
+Properties/
