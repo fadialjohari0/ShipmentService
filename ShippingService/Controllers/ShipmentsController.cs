@@ -1,5 +1,6 @@
 using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShipmentService.API.Data;
 using ShipmentService.API.Models.Shipment;
@@ -65,6 +66,7 @@ namespace ShipmentService.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> PostShipment(CreateShipmentDto createShipmentDto)
         {
             try
@@ -106,6 +108,7 @@ namespace ShipmentService.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> DeleteShipment(int id)
         {
             try
