@@ -1,7 +1,6 @@
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using ShipmentService.API.Contracts;
 using ShipmentService.API.Data;
 using ShipmentService.API.Models.Package;
 using ShipmentService.API.UOW;
