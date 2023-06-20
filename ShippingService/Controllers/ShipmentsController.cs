@@ -1,6 +1,7 @@
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ShipmentService.API.Data;
 using ShipmentService.API.Models.Shipment;
