@@ -42,12 +42,12 @@ namespace ShipmentService.API.AuthManager
             };
         }
 
-        public async Task<IEnumerable<IdentityError>> Register(ApiUserDto userDto)
+        public async Task<IEnumerable<IdentityError>> Register(ApiUserDto apiUserDto)
         {
-            var user = _mapper.Map<ApiUser>(userDto);
-            user.UserName = userDto.Email;
+            var user = _mapper.Map<ApiUser>(apiUserDto);
+            user.UserName = apiUserDto.Email;
 
-            var result = await _userManager.CreateAsync(user, userDto.Password);
+            var result = await _userManager.CreateAsync(user, apiUserDto.Password);
 
             if (result.Succeeded)
             {
