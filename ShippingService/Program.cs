@@ -28,7 +28,9 @@ builder.Services.AddDbContext<ShipmentServiceDbContext>(options =>
 
 builder.Services.AddIdentityCore<ApiUser>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ShipmentServiceDbContext>();
+    .AddTokenProvider<DataProtectorTokenProvider<ApiUser>>("ShippingServiceApi")
+    .AddEntityFrameworkStores<ShipmentServiceDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
