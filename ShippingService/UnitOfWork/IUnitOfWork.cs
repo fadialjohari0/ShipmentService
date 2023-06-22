@@ -6,6 +6,7 @@ namespace ShipmentService.API.UOW
     {
         IShipmentsRepository Shipments { get; }
         IPackagesRepository Packages { get; }
+        IUsersRepository Users { get; }
         Task<int> CompleteAsync();
     }
 }
