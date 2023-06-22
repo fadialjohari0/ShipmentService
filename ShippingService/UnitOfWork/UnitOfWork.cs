@@ -10,12 +10,14 @@ namespace ShipmentService.API.UOW
 
         public IShipmentsRepository Shipments { get; private set; }
         public IPackagesRepository Packages { get; private set; }
+        public IUsersRepository Users { get; private set; }
 
         public UnitOfWork(ShipmentServiceDbContext context)
         {
             this._context = context;
             Shipments = new ShipmentRepository(_context);
             Packages = new PackageRepository(_context);
+            Users = new UserRepository(_context);
         }
 
         public async Task<int> CompleteAsync()
