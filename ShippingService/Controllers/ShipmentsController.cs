@@ -1,7 +1,6 @@
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ShipmentService.API.Data;
 using ShipmentService.API.Models.Shipment;
@@ -33,8 +32,8 @@ namespace ShipmentService.API.Controllers
         {
             try
             {
-                var shipments = await _unitOfWork.Shipments.GetDetailsAllAsync();
-                var record = _mapper.Map<List<GetShipmentDto>>(shipments);
+                List<Shipment> shipments = await _unitOfWork.Shipments.GetDetailsAllAsync();
+                List<GetShipmentsWithUserDto> record = _mapper.Map<List<GetShipmentsWithUserDto>>(shipments);
                 return Ok(record);
             }
             catch (Exception)
@@ -48,7 +47,7 @@ namespace ShipmentService.API.Controllers
         {
             try
             {
-                var shipment = await _unitOfWork.Shipments.GetDetails(id);
+                Shipment shipment = await _unitOfWork.Shipments.GetDetails(id);
 
                 if (shipment is null)
                 {
@@ -56,7 +55,7 @@ namespace ShipmentService.API.Controllers
                     return NotFound(message);
                 }
 
-                var record = _mapper.Map<GetShipmentDto>(shipment);
+                GetShipmentDto record = _mapper.Map<GetShipmentDto>(shipment);
 
                 return Ok(record);
             }
@@ -70,29 +69,30 @@ namespace ShipmentService.API.Controllers
         [Authorize]
         public async Task<ActionResult> PostShipment(CreateShipmentDto createShipmentDto)
         {
+            var PackageValidationResult = await _packageValidator.ValidateAsync(createShipmentDto.Package);
+
+            if (!PackageValidationResult.IsValid)
+            {
+                var errors = PackageValidationResult.Errors.Select(error => error.ErrorMessage);
+                return BadRequest(errors);
+            }
+
+            var ShipmentValidationResult = await _shipmentValidator.ValidateAsync(createShipmentDto);
+
+            if (!ShipmentValidationResult.IsValid)
+            {
+                var errors = ShipmentValidationResult.Errors.Select(error => error.ErrorMessage);
+                return BadRequest(errors);
+            }
+
             try
             {
+                string userId = User.Claims.FirstOrDefault(x => x.Type == "id").Value;
                 Shipment shipment = _mapper.Map<Shipment>(createShipmentDto);
-
-                var PackageValidationResult = await _packageValidator.ValidateAsync(createShipmentDto.Package);
-
-                if (!PackageValidationResult.IsValid)
-                {
-                    var errors = PackageValidationResult.Errors.Select(error => error.ErrorMessage);
-                    return BadRequest(errors);
-                }
-
-                var ShipmentValidationResult = await _shipmentValidator.ValidateAsync(createShipmentDto);
-
-                if (!ShipmentValidationResult.IsValid)
-                {
-                    var errors = ShipmentValidationResult.Errors.Select(error => error.ErrorMessage);
-                    return BadRequest(errors);
-                }
+                shipment.UserId = userId;
 
                 await _unitOfWork.Shipments.AddAsync(shipment);
                 await _unitOfWork.CompleteAsync();
-
 
                 var response = new
                 {
@@ -114,7 +114,7 @@ namespace ShipmentService.API.Controllers
         {
             try
             {
-                var shipment = await _unitOfWork.Shipments.GetAsync(id);
+                Shipment shipment = await _unitOfWork.Shipments.GetAsync(id);
 
                 if (shipment is null)
                 {
