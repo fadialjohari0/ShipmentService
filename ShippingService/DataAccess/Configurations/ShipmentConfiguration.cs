@@ -7,7 +7,9 @@ namespace ShipmentService.API.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Shipment> builder)
         {
-
+            builder.HasOne<ApiUser>(e => e.ApiUser)
+             .WithMany(e => e.UserShipments)
+             .HasForeignKey(e => e.UserId);
         }
     }
 }
