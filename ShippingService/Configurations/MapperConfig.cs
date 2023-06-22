@@ -12,11 +12,21 @@ namespace ShipmentService.API.Configurations
         {
             CreateMap<Shipment, CreateShipmentDto>().ReverseMap();
             CreateMap<Shipment, GetShipmentDto>().ReverseMap();
+            CreateMap<GetShipmentsWithUserDto, Shipment>().ReverseMap();
+            CreateMap<BaseShipmentDto, Shipment>().ReverseMap();
 
             CreateMap<Package, PackageDto>().ReverseMap();
             CreateMap<Package, GetAllPackagesDto>().ReverseMap();
 
             CreateMap<ApiUserDto, ApiUser>().ReverseMap();
+
+            CreateMap<ApiUser, GetUsersDto>()
+                               .ForMember(dest => dest.NumberOfShipments,
+                                   opt => opt.MapFrom(src => src.UserShipments.Count));
+
+            CreateMap<ApiUser, GetUsersShipmentsDto>()
+                           .ForMember(dest => dest.UserShipments,
+                               opt => opt.MapFrom(src => src.UserShipments));
         }
     }
 }
