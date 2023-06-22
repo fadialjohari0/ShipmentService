@@ -59,7 +59,7 @@ namespace ShipmentService.API.AuthManager
         public async Task<IEnumerable<IdentityError>> Register(ApiUserDto apiUserDto)
         {
             _user = _mapper.Map<ApiUser>(apiUserDto);
-            _user.UserName = apiUserDto.Email;
+            _user.UserName = _user.FirstName + _user.LastName;
 
             IdentityResult result = await _userManager.CreateAsync(_user, apiUserDto.Password);
 
@@ -104,15 +104,16 @@ namespace ShipmentService.API.AuthManager
         {
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF32.GetBytes(_configuration["JwtSettings:Key"]));
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
             IList<string> roles = await _userManager.GetRolesAsync(_user);
             List<Claim> roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
+
             IList<Claim> userClaims = await _userManager.GetClaimsAsync(_user);
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, _user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, _user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, _user.Email),
                 new Claim("id", _user.Id)
             }
             .Union(userClaims).Union(roleClaims);
