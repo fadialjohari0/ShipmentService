@@ -11,7 +11,7 @@ namespace ShipmentService.API.Data
         public double Length { get; set; }
         public double Weight { get; set; }
 
-        public int ShipmentId { get; set; }
+        public int? ShipmentId { get; set; }
 
         [JsonIgnore]
         public Shipment Shipment { get; set; }
