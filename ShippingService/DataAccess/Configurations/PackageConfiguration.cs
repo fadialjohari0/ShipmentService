@@ -10,7 +10,7 @@ namespace ShipmentService.API.Data.Configurations
             builder.HasOne(e => e.Shipment)
              .WithOne(e => e.Package)
              .HasForeignKey<Package>(e => e.ShipmentId)
-             .IsRequired();
+             .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
