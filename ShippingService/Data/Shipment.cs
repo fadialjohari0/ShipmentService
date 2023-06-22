@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ShipmentService.API.Data
 {
     public class Shipment
@@ -7,5 +9,9 @@ namespace ShipmentService.API.Data
         public string ShippingServiceType { get; set; }
 
         public Package Package { get; set; }
+
+        public string UserId { get; set; }
+        [JsonIgnore]
+        public ApiUser ApiUser { get; set; }
     }
 }
