@@ -10,21 +10,27 @@ using ShipmentService.API.Data;
 using ShipmentService.API.Models.Shipment;
 using ShipmentService.API.Validators;
 using Xunit;
+using ShipmentService.API.UOW;
 
 namespace ShipmentTestApi.Systems.Controllers
 {
     public class TestShipmentController
     {
-
+        private readonly Mock<IUnitOfWork>? _unitOfWorkMock;
         private readonly Mock<IShipmentsRepository>? _shipmentRepositoryMock;
         private readonly Mock<IMapper>? _mapperMock;
         private readonly Mock<PackageDtoValidator>? _packageDtoValidator;
+        private readonly Mock<ShipmentDtoValidator>? _shipmentDtoValidator;
 
         public TestShipmentController()
         {
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
             _shipmentRepositoryMock = new Mock<IShipmentsRepository>();
             _mapperMock = new Mock<IMapper>();
             _packageDtoValidator = new Mock<PackageDtoValidator>();
+            _shipmentDtoValidator = new Mock<ShipmentDtoValidator>();
+
+            _unitOfWorkMock.Setup(_ => _.Shipments).Returns(_shipmentRepositoryMock.Object);
         }
 
 
@@ -34,7 +40,7 @@ namespace ShipmentTestApi.Systems.Controllers
             // Arrange
             _shipmentRepositoryMock?.Setup(_ => _.GetDetailsAllAsync()).ReturnsAsync(ShipmentMockData.GetShipments());
 
-            var sut = new ShipmentsController(_mapperMock?.Object, _shipmentRepositoryMock?.Object, _packageDtoValidator?.Object);
+            var sut = new ShipmentsController(_unitOfWorkMock?.Object, _mapperMock?.Object, _packageDtoValidator?.Object, _shipmentDtoValidator?.Object);
 
             // Act
             var result = await sut.GetAllShipments();
@@ -51,13 +57,13 @@ namespace ShipmentTestApi.Systems.Controllers
             // Arrange
             int id = 1;
 
-            var shipment = new Shipment { Id = id, ShipmentId = "Fedex" };
+            var shipment = new Shipment { Id = id, ShippingCompany = "Fedex" };
             _shipmentRepositoryMock?.Setup(_ => _.GetDetails(id)).ReturnsAsync(shipment);
 
-            var expectedDto = new GetShipmentDto { Id = id, ShipmentId = "Fedex" };
+            var expectedDto = new GetShipmentDto { Id = id, ShippingCompany = "Fedex" };
             _mapperMock?.Setup(mapper => mapper.Map<GetShipmentDto>(shipment)).Returns(expectedDto);
 
-            var sut = new ShipmentsController(_mapperMock?.Object, _shipmentRepositoryMock?.Object, _packageDtoValidator?.Object);
+            var sut = new ShipmentsController(_unitOfWorkMock?.Object, _mapperMock?.Object, _packageDtoValidator?.Object, _shipmentDtoValidator?.Object);
 
             // Act
             var result = await sut.GetShipment(id);
