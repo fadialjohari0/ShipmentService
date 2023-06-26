@@ -54,5 +54,24 @@ namespace ShipmentTestApi.Systems.Controllers
             var actualDto = (result.Result as OkObjectResult)?.Value as GetShipmentDto;
             actualDto.Should().BeEquivalentTo(expectedDto);
         }
+
+        [Fact]
+        public async Task GetShipment_ShouldReturn404_WhenIdDoesNotExist()
+        {
+            // Arrange
+            int id = 999;
+
+            var builder = new ShipmentsControllerBuilder();
+            builder.ShipmentRepositoryMock.Setup(_ => _.GetDetails(id)).ReturnsAsync((Shipment)null);
+
+            var sut = builder.Build();
+
+            // Act
+            var result = await sut.GetShipment(id);
+
+            // Assert
+            result.Result.Should().BeOfType<NotFoundObjectResult>();
+            (result.Result as NotFoundObjectResult)?.StatusCode.Should().Be(404);
+        }
     }
 }
