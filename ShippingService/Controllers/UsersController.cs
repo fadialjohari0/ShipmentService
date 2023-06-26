@@ -80,7 +80,7 @@ namespace ShipmentService.API.Controllers
 
         [HttpGet]
         [Route("GetUsers")]
-        // [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<IEnumerable<GetUsersDto>>> GetAllUsers()
         {
             try
