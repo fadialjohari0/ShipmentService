@@ -28,6 +28,7 @@ namespace ShipmentService.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<IEnumerable<GetShipmentDto>>> GetAllShipments()
         {
             try
@@ -43,6 +44,7 @@ namespace ShipmentService.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<ActionResult<Shipment>> GetShipment(int id)
         {
             try
