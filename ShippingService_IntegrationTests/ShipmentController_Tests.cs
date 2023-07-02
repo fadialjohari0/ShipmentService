@@ -24,25 +24,28 @@ public class ShipmentsControllerTests : IClassFixture<CustomWebApplicationFactor
     public async Task GetAllShipments_ReturnsSuccessCodeAndCorrectContentType()
     {
         // Arrange
-        var url = "/api/shipments";
+        var token = await _factory.GetJwtTokenAsync();
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/shipments");
+        _factory.AddJwtTokenToRequest(request, token);
 
         // Act
-        var response = await _client.GetAsync(url);
+        var response = await _client.SendAsync(request);
 
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.Equal("application/json; charset=utf-8",
-            response.Content.Headers.ContentType.ToString());
+            response.Content.Headers.ContentType?.ToString());
     }
 
     [Fact]
     public async Task GetShipment_ReturnsShipment_GivenValidId()
     {
         // Arrange
-        var url = "/api/shipments/1";
-
+        var token = await _factory.GetJwtTokenAsync();
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/shipments/1");
+        _factory.AddJwtTokenToRequest(request, token);
         // Act
-        var response = await _client.GetAsync(url);
+        var response = await _client.SendAsync(request);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -59,10 +62,13 @@ public class ShipmentsControllerTests : IClassFixture<CustomWebApplicationFactor
     public async Task GetShipment_ReturnsNotFound_GivenInvalidId()
     {
         // Arrange
-        var url = "/api/shipments/9999";
+        var token = await _factory.GetJwtTokenAsync();
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/shipments/9999");
+        _factory.AddJwtTokenToRequest(request, token);
+
 
         // Act
-        var response = await _client.GetAsync(url);
+        var response = await _client.SendAsync(request);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
